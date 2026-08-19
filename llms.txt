@@ -1,0 +1,26 @@
+# Minimalism
+
+> Minimalism (Minimalism_Mz) é uma loja de vestuário, calçado, relógios e acessórios em Maputo, Moçambique, com estilo minimalista e atemporal. Funciona como loja física e loja online, com vendas geridas principalmente por WhatsApp.
+
+Loja fundada em 2023. Vende vestuário, calçado (chinelos, sandálias, sapatilhas), relógios e acessórios, incluindo peças de marcas como Zara e Boss. Atendimento físico das 08h às 18h, todos os dias, na Av. Zédequias Manganhela, próximo à Clínica Cruz Azul, em Maputo. As encomendas online e o apoio ao cliente são feitos por WhatsApp.
+
+## Dados de contacto
+
+- Nome: Minimalism (Minimalism_Mz)
+- Morada: Av. Zédequias Manganhela, próximo à Clínica Cruz Azul, Maputo, Moçambique
+- Horário: Todos os dias, das 08h às 18h
+- WhatsApp / chamadas: +258 87 116 4015
+- Link directo WhatsApp: https://wa.me/258871164015
+- Instagram: https://instagram.com/minimalism_mz
+
+## Páginas
+
+- [Site principal](https://minimalism.co.mz/): Apresentação da loja, categorias de produtos (vestuário, calçado, relógios, acessórios), marcas disponíveis, como comprar e localização.
+- [Localização](https://minimalism.co.mz/#localizacao): Morada, horário de funcionamento e contactos da loja física.
+- [Colecções](https://minimalism.co.mz/#colecoes): Categorias de produtos vendidos na loja.
+- [Marcas](https://minimalism.co.mz/#marcas): Marcas disponíveis na loja, incluindo Zara e Boss.
+
+## Notas
+
+- A loja não tem checkout online próprio; as compras são feitas por mensagem directa no WhatsApp.
+- Os URLs acima assumem o domínio final do site; substituir por o domínio real depois da publicação.
