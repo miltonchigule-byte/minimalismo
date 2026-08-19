@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="pt-MZ">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Painel Admin — Minimalism</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --charcoal:#141412; --charcoal-2:#1C1B17;
+    --brass:#C9A227; --brass-light:#E8CE7A;
+    --ivory:#F4F0E6; --ivory-dim:rgba(244,240,230,0.68);
+    --crimson:#B23A2E; --olive:#585F44;
+    --line:rgba(20,20,18,0.14); --line-strong:rgba(20,20,18,0.22);
+    --ok:#4C7A5C; --err:#B23A2E;
+    --radius:12px;
+  }
+  *{box-sizing:border-box;}
+  body{ margin:0; background:#F4F0E6; color:var(--charcoal); font-family:'Inter',system-ui,sans-serif; }
+  h1,h2,.display{ font-family:'Fraunces',serif; font-weight:600; margin:0; }
+  .mono{ font-family:'IBM Plex Mono',monospace; }
+  input, select, textarea, button{ font-family:inherit; font-size:0.92rem; }
+
+  /* -------- LOGIN -------- */
+  #loginScreen{
+    min-height:100vh; display:flex; align-items:center; justify-content:center;
+    background:var(--charcoal); padding:20px;
+  }
+  .login-card{
+    background:#fff; border-radius:16px; padding:38px 32px; width:100%; max-width:380px;
+    box-shadow:0 30px 60px -20px rgba(0,0,0,0.4);
+  }
+  .login-card h1{ font-size:1.4rem; font-style:italic; text-align:center; }
+  .login-card p{ text-align:center; color:rgba(20,20,18,0.55); font-size:0.86rem; margin-top:8px; margin-bottom:26px; }
+  .field{ margin-bottom:14px; }
+  .field label{ display:block; font-size:0.78rem; font-weight:600; margin-bottom:6px; color:rgba(20,20,18,0.7); }
+  .field input, .field select, .field textarea{
+    width:100%; padding:11px 13px; border:1px solid var(--line-strong); border-radius:9px; outline:none;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus{ border-color:var(--brass); }
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    padding:12px 18px; border-radius:9px; border:none; cursor:pointer;
+    font-weight:600; font-size:0.9rem; text-decoration:none;
+  }
+  .btn-brass{ background:linear-gradient(135deg,var(--brass-light),var(--brass)); color:var(--charcoal); width:100%; }
+  .btn-outline{ background:#fff; border:1px solid var(--line-strong); color:var(--charcoal); }
+  .btn-danger{ background:transparent; color:var(--err); border:1px solid rgba(178,58,46,0.4); }
+  .btn:disabled{ opacity:0.5; cursor:not-allowed; }
+  #loginError{ color:var(--err); font-size:0.82rem; margin-top:10px; text-align:center; min-height:16px; }
+
+  /* -------- DASHBOARD -------- */
+  #dashboard{ display:none; min-height:100vh; }
+  header{ background:var(--charcoal); color:var(--ivory); padding:16px 20px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:20; }
+  header .brand{ font-family:'Fraunces'; font-weight:600; font-size:1.05rem; }
+  header .who{ font-size:0.78rem; color:var(--ivory-dim); }
+  .wrap{ max-width:1000px; margin:0 auto; padding:28px 20px 60px; }
+
+  .toolbar{ display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:space-between; margin-bottom:22px; }
+  .toolbar h2{ font-size:1.3rem; font-style:italic; }
+  .filter-select{ padding:9px 12px; border:1px solid var(--line-strong); border-radius:8px; background:#fff; }
+
+  .panel{ background:#fff; border:1px solid var(--line-strong); border-radius:var(--radius); padding:22px; margin-bottom:26px; }
+  .panel h3{ font-family:'Inter'; font-weight:700; font-size:0.98rem; margin-bottom:16px; }
+  .form-grid{ display:grid; gap:14px; grid-template-columns:1fr; }
+  @media(min-width:640px){ .form-grid{ grid-template-columns:1fr 1fr; } }
+  .form-grid .full{ grid-column:1/-1; }
+  .toggle-row{ display:flex; align-items:center; gap:8px; font-size:0.85rem; }
+  .form-actions{ display:flex; gap:10px; margin-top:18px; flex-wrap:wrap; }
+  .status-msg{ font-size:0.82rem; margin-top:10px; }
+  .status-msg.ok{ color:var(--ok); }
+  .status-msg.err{ color:var(--err); }
+
+  .table-wrap{ overflow-x:auto; }
+  table{ width:100%; border-collapse:collapse; font-size:0.86rem; }
+  th{ text-align:left; padding:10px 12px; color:rgba(20,20,18,0.5); font-weight:600; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em; border-bottom:1px solid var(--line-strong); }
+  td{ padding:10px 12px; border-bottom:1px solid var(--line); vertical-align:middle; }
+  td.thumb-cell img{ width:44px;height:44px;border-radius:8px;object-fit:cover; display:block; background:var(--charcoal-2); }
+  td.thumb-cell .noimg{ width:44px;height:44px;border-radius:8px; background:#eee; }
+  .row-actions{ display:flex; gap:8px; }
+  .row-actions button{ background:none; border:none; cursor:pointer; font-size:0.8rem; font-weight:600; padding:4px 6px; border-radius:6px; }
+  .row-actions .edit{ color:var(--olive); }
+  .row-actions .del{ color:var(--err); }
+  .badge-cat{ font-size:0.7rem; background:#f0ede3; padding:3px 8px; border-radius:999px; color:rgba(20,20,18,0.6); }
+  .empty-row td{ text-align:center; color:rgba(20,20,18,0.45); padding:30px; }
+</style>
+</head>
+<body>
+
+<!-- ================= LOGIN ================= -->
+<div id="loginScreen">
+  <div class="login-card">
+    <h1>Painel Minimalism</h1>
+    <p>Acesso restrito à equipa autorizada.</p>
+    <div class="field">
+      <label for="email">Email</label>
+      <input type="email" id="email" autocomplete="username" placeholder="tuemail@exemplo.com">
+    </div>
+    <div class="field">
+      <label for="password">Palavra-passe</label>
+      <input type="password" id="password" autocomplete="current-password" placeholder="••••••••">
+    </div>
+    <button class="btn btn-brass" id="loginBtn">Entrar</button>
+    <div id="loginError"></div>
+  </div>
+</div>
+
+<!-- ================= DASHBOARD ================= -->
+<div id="dashboard">
+  <header>
+    <div class="brand">Minimalism · Painel</div>
+    <div style="display:flex; align-items:center; gap:14px;">
+      <span class="who mono" id="whoEmail"></span>
+      <button class="btn btn-outline" id="logoutBtn" style="padding:8px 14px; font-size:0.8rem;">Sair</button>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <div class="toolbar">
+      <h2>Catálogo</h2>
+      <select id="filterCat" class="filter-select">
+        <option value="todos">Todas as categorias</option>
+      </select>
+    </div>
+
+    <!-- FORM: add / edit -->
+    <div class="panel">
+      <h3 id="formTitle">Adicionar peça</h3>
+      <input type="hidden" id="productId">
+      <div class="form-grid">
+        <div class="field full">
+          <label>Nome da peça</label>
+          <input type="text" id="fName" placeholder="Ex: Chinelo Slide Olive">
+        </div>
+        <div class="field">
+          <label>Categoria</label>
+          <select id="fCategory"></select>
+        </div>
+        <div class="field">
+          <label>Preço (MT) — opcional</label>
+          <input type="number" id="fPrice" placeholder="Ex: 2500">
+        </div>
+        <div class="field full">
+          <label>Descrição — opcional</label>
+          <textarea id="fDesc" rows="2" placeholder="Detalhes curtos: tamanhos, material, etc."></textarea>
+        </div>
+        <div class="field full">
+          <label>Foto</label>
+          <input type="file" id="fImage" accept="image/*">
+          <div id="imgPreviewWrap" style="margin-top:10px; display:none;">
+            <img id="imgPreview" style="width:70px;height:70px;border-radius:8px;object-fit:cover;">
+          </div>
+        </div>
+        <div class="field full toggle-row">
+          <input type="checkbox" id="fInStock" checked>
+          <label for="fInStock" style="margin:0;">Disponível em stock (mostrar no site)</label>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-brass" id="saveBtn" style="width:auto; padding:11px 24px;">Guardar peça</button>
+        <button class="btn btn-outline" id="cancelEditBtn" style="display:none;">Cancelar edição</button>
+      </div>
+      <div class="status-msg" id="formStatus"></div>
+    </div>
+
+    <!-- TABLE -->
+    <div class="panel">
+      <h3>Peças no catálogo</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Foto</th><th>Nome</th><th>Categoria</th><th>Preço</th><th>Stock</th><th></th></tr>
+          </thead>
+          <tbody id="productsTableBody">
+            <tr class="empty-row"><td colspan="6">A carregar…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import {
+    getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import {
+    getFirestore, collection, addDoc, updateDoc, deleteDoc, doc,
+    query, orderBy, onSnapshot, serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { firebaseConfig, CATEGORIAS, cloudinaryConfig } from "./firebase-config.js";
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  // ---------- DOM refs ----------
+  const loginScreen = document.getElementById("loginScreen");
+  const dashboard = document.getElementById("dashboard");
+  const emailInput = document.getElementById("email");
+  const passwordInput = document.getElementById("password");
+  const loginBtn = document.getElementById("loginBtn");
+  const loginError = document.getElementById("loginError");
+  const logoutBtn = document.getElementById("logoutBtn");
+  const whoEmail = document.getElementById("whoEmail");
+
+  const fCategory = document.getElementById("fCategory");
+  const filterCat = document.getElementById("filterCat");
+  const productsTableBody = document.getElementById("productsTableBody");
+
+  // ---------- populate category selects ----------
+  fCategory.innerHTML = CATEGORIAS.map(c => `<option value="${c.id}">${c.label}</option>`).join("");
+  filterCat.innerHTML += CATEGORIAS.map(c => `<option value="${c.id}">${c.label}</option>`).join("");
+
+  // ---------- AUTH ----------
+  loginBtn.addEventListener("click", async () => {
+    loginError.textContent = "";
+    loginBtn.disabled = true;
+    try {
+      await signInWithEmailAndPassword(auth, emailInput.value.trim(), passwordInput.value);
+    } catch (e) {
+      loginError.textContent = "Email ou palavra-passe incorrectos.";
+    } finally {
+      loginBtn.disabled = false;
+    }
+  });
+  function handleEnterKey(e){ if (e.key === "Enter") loginBtn.click(); }
+  emailInput.addEventListener("keydown", handleEnterKey);
+  passwordInput.addEventListener("keydown", handleEnterKey);
+
+  logoutBtn.addEventListener("click", () => signOut(auth));
+
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      loginScreen.style.display = "none";
+      dashboard.style.display = "block";
+      whoEmail.textContent = user.email;
+      startProductsListener();
+    } else {
+      dashboard.style.display = "none";
+      loginScreen.style.display = "flex";
+    }
+  });
+
+  // ---------- PRODUCTS ----------
+  let allProducts = [];
+  let editingId = null;
+
+  function startProductsListener(){
+    const q = query(collection(db, "products"), orderBy("createdAt", "desc"));
+    onSnapshot(q, (snap) => {
+      allProducts = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      renderTable();
+    });
+  }
+
+  filterCat.addEventListener("change", renderTable);
+
+  function renderTable(){
+    const filter = filterCat.value;
+    const list = filter === "todos" ? allProducts : allProducts.filter(p => p.category === filter);
+
+    if (list.length === 0){
+      productsTableBody.innerHTML = `<tr class="empty-row"><td colspan="6">Nenhuma peça encontrada.</td></tr>`;
+      return;
+    }
+
+    productsTableBody.innerHTML = list.map(p => {
+      const catLabel = (CATEGORIAS.find(c => c.id === p.category) || {}).label || p.category || "—";
+      const thumb = p.imageUrl ? `<img src="${p.imageUrl}" alt="">` : `<div class="noimg"></div>`;
+      const price = p.price ? `${Number(p.price).toLocaleString('pt-PT')} MT` : "—";
+      const stock = p.inStock === false ? "Oculto" : "Visível";
+      return `
+        <tr>
+          <td class="thumb-cell">${thumb}</td>
+          <td>${escapeHtml(p.name)}</td>
+          <td><span class="badge-cat">${catLabel}</span></td>
+          <td>${price}</td>
+          <td>${stock}</td>
+          <td>
+            <div class="row-actions">
+              <button class="edit" data-id="${p.id}">Editar</button>
+              <button class="del" data-id="${p.id}">Remover</button>
+            </div>
+          </td>
+        </tr>`;
+    }).join("");
+
+    productsTableBody.querySelectorAll(".edit").forEach(btn => btn.addEventListener("click", () => loadForEdit(btn.dataset.id)));
+    productsTableBody.querySelectorAll(".del").forEach(btn => btn.addEventListener("click", () => removeProduct(btn.dataset.id)));
+  }
+
+  function escapeHtml(str){
+    const d = document.createElement("div");
+    d.textContent = str || "";
+    return d.innerHTML;
+  }
+
+  // ---------- Upload de fotos (Cloudinary) ----------
+  async function uploadToCloudinary(file){
+    const url = `https://api.cloudinary.com/v1_1/${cloudinaryConfig.cloudName}/image/upload`;
+    const form = new FormData();
+    form.append("file", file);
+    form.append("upload_preset", cloudinaryConfig.uploadPreset);
+    form.append("folder", "products");
+
+    const res = await fetch(url, { method: "POST", body: form });
+    if (!res.ok){
+      const errBody = await res.json().catch(() => ({}));
+      throw new Error(errBody?.error?.message || "Falha no upload da foto.");
+    }
+    const data = await res.json();
+    return data.secure_url;
+  }
+
+  // ---------- FORM ----------
+  const fName = document.getElementById("fName");
+  const fPrice = document.getElementById("fPrice");
+  const fDesc = document.getElementById("fDesc");
+  const fImage = document.getElementById("fImage");
+  const fInStock = document.getElementById("fInStock");
+  const imgPreviewWrap = document.getElementById("imgPreviewWrap");
+  const imgPreview = document.getElementById("imgPreview");
+  const formTitle = document.getElementById("formTitle");
+  const formStatus = document.getElementById("formStatus");
+  const saveBtn = document.getElementById("saveBtn");
+  const cancelEditBtn = document.getElementById("cancelEditBtn");
+  const productIdInput = document.getElementById("productId");
+
+  let currentImageUrl = "";
+
+  fImage.addEventListener("change", () => {
+    const file = fImage.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      imgPreview.src = e.target.result;
+      imgPreviewWrap.style.display = "block";
+    };
+    reader.readAsDataURL(file);
+  });
+
+  function loadForEdit(id){
+    const p = allProducts.find(x => x.id === id);
+    if (!p) return;
+    editingId = id;
+    productIdInput.value = id;
+    fName.value = p.name || "";
+    fCategory.value = p.category || CATEGORIAS[0].id;
+    fPrice.value = p.price || "";
+    fDesc.value = p.description || "";
+    fInStock.checked = p.inStock !== false;
+    currentImageUrl = p.imageUrl || "";
+    if (currentImageUrl){
+      imgPreview.src = currentImageUrl;
+      imgPreviewWrap.style.display = "block";
+    } else {
+      imgPreviewWrap.style.display = "none";
+    }
+    formTitle.textContent = "Editar peça";
+    cancelEditBtn.style.display = "inline-flex";
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  cancelEditBtn.addEventListener("click", resetForm);
+
+  function resetForm(){
+    editingId = null;
+    productIdInput.value = "";
+    fName.value = "";
+    fCategory.selectedIndex = 0;
+    fPrice.value = "";
+    fDesc.value = "";
+    fInStock.checked = true;
+    fImage.value = "";
+    currentImageUrl = "";
+    imgPreviewWrap.style.display = "none";
+    formTitle.textContent = "Adicionar peça";
+    cancelEditBtn.style.display = "none";
+    formStatus.textContent = "";
+    formStatus.className = "status-msg";
+  }
+
+  saveBtn.addEventListener("click", async () => {
+    if (!fName.value.trim()){
+      formStatus.textContent = "Dá um nome à peça antes de guardar.";
+      formStatus.className = "status-msg err";
+      return;
+    }
+    saveBtn.disabled = true;
+    formStatus.textContent = "A guardar…";
+    formStatus.className = "status-msg";
+
+    try {
+      let imageUrl = currentImageUrl;
+      const file = fImage.files[0];
+      if (file){
+        formStatus.textContent = "A enviar foto…";
+        imageUrl = await uploadToCloudinary(file);
+      }
+
+      const data = {
+        name: fName.value.trim(),
+        category: fCategory.value,
+        price: fPrice.value ? Number(fPrice.value) : null,
+        description: fDesc.value.trim(),
+        imageUrl: imageUrl || "",
+        inStock: fInStock.checked
+      };
+
+      if (editingId){
+        await updateDoc(doc(db, "products", editingId), data);
+      } else {
+        await addDoc(collection(db, "products"), { ...data, createdAt: serverTimestamp() });
+      }
+
+      formStatus.textContent = "Guardado com sucesso.";
+      formStatus.className = "status-msg ok";
+      resetForm();
+    } catch (e) {
+      console.error(e);
+      formStatus.textContent = "Erro ao guardar. Tenta novamente.";
+      formStatus.className = "status-msg err";
+    } finally {
+      saveBtn.disabled = false;
+    }
+  });
+
+  async function removeProduct(id){
+    if (!confirm("Remover esta peça do catálogo? Esta acção não pode ser desfeita.")) return;
+    try {
+      await deleteDoc(doc(db, "products", id));
+    } catch (e) {
+      alert("Erro ao remover. Tenta novamente.");
+      console.error(e);
+    }
+  }
+</script>
+
+</body>
+</html>

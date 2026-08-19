@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="pt-MZ">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Catálogo — Minimalism</title>
+<meta name="description" content="Catálogo completo Minimalism_Mz: vestuário, calçado, relógios e acessórios, Maputo.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --charcoal:#141412; --charcoal-2:#1C1B17; --charcoal-3:#242219;
+    --wood-a:#6B4A31; --wood-b:#4A3222;
+    --brass:#C9A227; --brass-light:#E8CE7A;
+    --ivory:#F4F0E6; --ivory-dim:rgba(244,240,230,0.68);
+    --olive:#585F44; --crimson:#B23A2E;
+    --line:rgba(20,20,18,0.14); --line-strong:rgba(20,20,18,0.28);
+    --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  body{ margin:0; background:var(--ivory); color:var(--charcoal); font-family:'Inter',system-ui,sans-serif; line-height:1.55; padding-bottom:20px; }
+  h1,h2,.display{ font-family:'Fraunces',serif; font-weight:600; letter-spacing:-0.01em; margin:0; }
+  .mono{ font-family:'IBM Plex Mono',monospace; }
+  a{ color:inherit; }
+  .wrap{ max-width:1120px; margin:0 auto; padding:0 20px; }
+
+  header{ position:sticky; top:0; z-index:50; background:rgba(20,20,18,0.95); backdrop-filter:blur(10px); border-bottom:1px solid rgba(244,240,230,0.14); }
+  .nav{ display:flex; align-items:center; justify-content:space-between; padding:14px 20px; max-width:1120px; margin:0 auto; }
+  .brand{ display:flex; align-items:center; gap:10px; text-decoration:none; color:var(--ivory); font-family:'Fraunces'; font-weight:600; }
+  .brand svg{ width:22px;height:22px; }
+  .back{ font-size:0.85rem; color:var(--ivory-dim); text-decoration:none; }
+  .back:hover{ color:var(--brass-light); }
+
+  .hero{ padding:44px 0 28px; text-align:center; }
+  .hero .eyebrow{ font-size:0.72rem; text-transform:uppercase; letter-spacing:0.14em; color:var(--crimson); font-weight:700; margin-bottom:10px; }
+  .hero h1{ font-size:clamp(1.8rem,4.5vw,2.6rem); font-style:italic; font-weight:500; }
+  .hero p{ margin-top:12px; color:rgba(20,20,18,0.6); }
+
+  /* category tabs */
+  .tabs{ display:flex; gap:8px; overflow-x:auto; padding:4px 20px 24px; max-width:1120px; margin:0 auto; scrollbar-width:none; }
+  .tabs::-webkit-scrollbar{ display:none; }
+  .tab{
+    flex:0 0 auto; padding:10px 18px; border-radius:999px; border:1px solid var(--line-strong);
+    background:#fff; font-weight:600; font-size:0.86rem; cursor:pointer; white-space:nowrap;
+    transition:background .15s ease, color .15s ease, border-color .15s ease;
+  }
+  .tab.active{ background:var(--charcoal); color:var(--ivory); border-color:var(--charcoal); }
+
+  .grid{ display:grid; gap:20px; grid-template-columns:repeat(2,1fr); padding-bottom:80px; }
+  @media(min-width:640px){ .grid{ grid-template-columns:repeat(3,1fr); } }
+  @media(min-width:960px){ .grid{ grid-template-columns:repeat(4,1fr); } }
+
+  .card{
+    background:#fff; border:1px solid var(--line-strong); border-radius:var(--radius);
+    overflow:hidden; display:flex; flex-direction:column;
+  }
+  .card .thumb{ aspect-ratio:1/1; background:var(--charcoal-2) url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%23E8CE7A" stroke-width="1.2"><path d="M20.4 14.5L16 10 8 18l-4.5-4.5"/><path d="M14 8L18 4l4 4-4 4"/></svg>') center/34px no-repeat; position:relative; }
+  .card .thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .card .body{ padding:14px 14px 16px; display:flex; flex-direction:column; gap:4px; flex:1; }
+  .card h3{ font-family:'Inter'; font-weight:700; font-size:0.92rem; }
+  .card .price{ font-family:'Fraunces'; font-style:italic; color:var(--brass); font-weight:600; font-size:1rem; margin-top:2px; }
+  .card .desc{ font-size:0.8rem; color:rgba(20,20,18,0.6); margin-top:2px; flex:1; }
+  .card .cat-tag{ font-size:0.66rem; text-transform:uppercase; letter-spacing:0.08em; color:rgba(20,20,18,0.45); }
+  .card .buy{
+    margin:10px 14px 14px; text-align:center; padding:9px; border-radius:8px;
+    background:linear-gradient(135deg,var(--brass-light),var(--brass)); color:var(--charcoal);
+    font-weight:600; font-size:0.82rem; text-decoration:none;
+  }
+
+  .empty, .loading{ text-align:center; padding:60px 20px; color:rgba(20,20,18,0.5); }
+  .empty svg, .loading svg{ width:38px;height:38px; margin-bottom:12px; opacity:0.4; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav">
+    <a class="brand" href="index.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="var(--brass-light)" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M9 16 L9 8 L12 12 L15 8 L15 16" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Minimalism
+    </a>
+    <a class="back" href="index.html">← Voltar ao site</a>
+  </div>
+</header>
+
+<div class="hero wrap">
+  <div class="eyebrow">Catálogo completo</div>
+  <h1>Tudo o que temos em loja</h1>
+  <p>Actualizado directamente pela equipa Minimalism.</p>
+</div>
+
+<div class="tabs" id="tabs"></div>
+
+<div class="wrap">
+  <div id="grid" class="grid"></div>
+  <div id="loading" class="loading">A carregar catálogo…</div>
+  <div id="empty" class="empty" style="display:none;">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.4 14.5L16 10 8 18l-4.5-4.5"/><path d="M14 8L18 4l4 4-4 4"/></svg>
+    <div>Ainda não há peças nesta categoria.</div>
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, collection, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { firebaseConfig, CATEGORIAS } from "./firebase-config.js";
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const WHATSAPP = "258871164015";
+
+  let allProducts = [];
+  let activeCategory = "todos";
+
+  const tabsEl = document.getElementById("tabs");
+  const gridEl = document.getElementById("grid");
+  const loadingEl = document.getElementById("loading");
+  const emptyEl = document.getElementById("empty");
+
+  function buildTabs(){
+    const tabs = [{ id: "todos", label: "Todos" }, ...CATEGORIAS];
+    tabsEl.innerHTML = tabs.map(t =>
+      `<button class="tab ${t.id === activeCategory ? "active" : ""}" data-cat="${t.id}">${t.label}</button>`
+    ).join("");
+    tabsEl.querySelectorAll(".tab").forEach(btn => {
+      btn.addEventListener("click", () => {
+        activeCategory = btn.dataset.cat;
+        buildTabs();
+        render();
+      });
+    });
+  }
+
+  function render(){
+    const list = activeCategory === "todos"
+      ? allProducts
+      : allProducts.filter(p => p.category === activeCategory);
+
+    if (list.length === 0){
+      gridEl.style.display = "none";
+      emptyEl.style.display = "block";
+      return;
+    }
+    emptyEl.style.display = "none";
+    gridEl.style.display = "grid";
+
+    gridEl.innerHTML = list.map(p => {
+      const catLabel = (CATEGORIAS.find(c => c.id === p.category) || {}).label || p.category || "";
+      const priceHtml = p.price ? `<div class="price">${Number(p.price).toLocaleString('pt-PT')} MT</div>` : "";
+      const img = p.imageUrl
+        ? `<img src="${p.imageUrl}" alt="${escapeHtml(p.name)}" loading="lazy">`
+        : "";
+      const waText = encodeURIComponent(`Olá! Tenho interesse em: ${p.name}`);
+      return `
+        <div class="card">
+          <div class="thumb">${img}</div>
+          <div class="body">
+            <div class="cat-tag">${catLabel}</div>
+            <h3>${escapeHtml(p.name)}</h3>
+            ${priceHtml}
+            ${p.description ? `<div class="desc">${escapeHtml(p.description)}</div>` : ""}
+          </div>
+          <a class="buy" href="https://wa.me/${WHATSAPP}?text=${waText}" target="_blank" rel="noopener">Perguntar no WhatsApp</a>
+        </div>`;
+    }).join("");
+  }
+
+  function escapeHtml(str){
+    const d = document.createElement("div");
+    d.textContent = str || "";
+    return d.innerHTML;
+  }
+
+  buildTabs();
+
+  const q = query(collection(db, "products"), orderBy("createdAt", "desc"));
+  onSnapshot(q, (snap) => {
+    loadingEl.style.display = "none";
+    allProducts = snap.docs
+      .map(d => ({ id: d.id, ...d.data() }))
+      .filter(p => p.inStock !== false);
+    render();
+  }, (err) => {
+    loadingEl.textContent = "Não foi possível carregar o catálogo. Verifica a configuração do Firebase.";
+    console.error(err);
+  });
+</script>
+
+</body>
+</html>
