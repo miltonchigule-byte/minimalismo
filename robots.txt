@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://minimalismo-steel.vercel.app/sitemap.xml
